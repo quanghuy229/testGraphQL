@@ -1,15 +1,11 @@
 import './App.css';
-import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
-import React, { useState, useEffect } from 'react';
+import { useQuery, useMutation } from "@apollo/client";
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { resolver, FETCH_TODO, CREATE_TODO, DELETE_TODO, UPDATE_TODO } from "./App.tsx";
-import { useAsyncEffect } from 'use-async-effect';
 
 function App() {
   const { data, loading, error, refetch } = useQuery(FETCH_TODO);
-  // const [deteleTodo, deleteAction] = useLazyQuery(DELETE_TODO, {variables: { deteleId: 1}});
-
-  // console.log(onDeleteHandler);
   const [createTodo] = useMutation(CREATE_TODO, {
     refetchQueries: [
       { query: FETCH_TODO }
@@ -25,16 +21,13 @@ function App() {
       { query: FETCH_TODO }
     ]
   });
-  // const [fetchTodo] = useLazyQuery(FETCH_TODO);
   const {
     register,
     handleSubmit,
     setValue,
-    reset,
     formState: { errors }
   } = useForm({ resolver });
 
-  // const [addTodo, { loadingItem, item }] = useLazyQuery(ADD_TODO);
   const [showForm, setShowForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [errorProcess, setErrorProcess] = useState('');
@@ -82,12 +75,12 @@ function App() {
     <div className="main">
       <h1>List Todo</h1>
       <div>
-        <div className='table'>
+        {data.todos.length && <div className='table'>
           <div className='item-id'>Id</div>
           <div className='item-des'>Description</div>
           <div className='item-finish'>is Finished</div>
           <div className='item-action'>Action</div>
-        </div>
+        </div>}
         {data.todos.length && data.todos.map((item) => (
           <React.Fragment key={item.id}>
             <div className='table'>
@@ -118,7 +111,7 @@ function App() {
         {errors && errors.id && <div>{errors.id.message}</div>}
         {errors && errors.description && <div>{errors.description.message}</div>}
         {errorProcess && <div>{errorProcess}</div>}
-        {!showForm && <input type="submit" value="Create new" onClick={() => {setShowForm(true)}} />}
+        {!showForm && <input type="submit" value="Create new" onClick={() => { setShowForm(true) }} />}
       </div>
     </div>
   );
